@@ -61,7 +61,7 @@ Build mode: learn for slices 1–3 (very short explanations, 2–3 lines); fast 
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 2 (the first time you can actually catch the AI), feeding into the slice 3 instruction tuning
+- [x] Early usable behavior explored — after slice 2 (the first time you can actually catch the AI), feeding into the slice 3 instruction tuning. Learner played the example round: mistakes fair; CAUGHT stamp, counter, look again and nudge all work. No changes requested; repeat-tap rule kept.
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
