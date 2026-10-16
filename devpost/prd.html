@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catch the AI — PRD</title>
+<style>
+  :root {
+    --bg: #f6f1e7; --card: #fffdf8; --ink: #22201c; --muted: #6b655b; --line: #e3dccd;
+    --accent: #c0392b; --ok: #2b8a3e; --soft: #fbeee9;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1815; --card: #24211d; --ink: #efe9dd; --muted: #a9a193; --line: #3a362f;
+      --accent: #ff6b5a; --ok: #5ccf74; --soft: #33231f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 880px; margin: 0 auto; padding: 32px 16px 64px; }
+  .tag { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; }
+  h1 { font-size: clamp(28px, 6vw, 42px); margin: 12px 0 4px; line-height: 1.15; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+  h2 { font-size: 20px; margin: 0 0 8px; }
+  h3 { font-size: 16px; margin: 16px 0 6px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 16px 0; }
+  .grow { border-left: 5px solid var(--accent); background: var(--soft); }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { fill: var(--ink); font-family: inherit; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tabs button { flex: 1 1 120px; padding: 10px; border-radius: 10px; border: 2px solid var(--line);
+    background: transparent; color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+  .tabs button[aria-selected="true"] { border-color: var(--accent); color: var(--accent); }
+  .panel[hidden] { display: none; }
+  .mock { border: 1px dashed var(--line); border-radius: 10px; padding: 14px; margin: 10px 0; font-size: 15px; background: var(--bg); }
+  .mock .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .pill { border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; font-size: 13px; }
+  .banner { background: var(--accent); color: #fff; border-radius: 8px; padding: 4px 10px; font-weight: 600; }
+  .stamp { display: inline-block; color: var(--accent); border: 2px solid var(--accent); border-radius: 4px;
+    padding: 0 6px; font-weight: 800; font-size: 12px; transform: rotate(-6deg); margin-left: 6px; letter-spacing: .05em; }
+  .msg { display: block; margin: 6px 0; padding: 8px 10px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); }
+  ul.check { list-style: none; padding-left: 0; margin: 6px 0; }
+  ul.check li { padding-left: 26px; position: relative; margin: 4px 0; }
+  ul.check li::before { content: "☐"; position: absolute; left: 4px; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td, th { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 8px 0; background: var(--card); }
+  summary { cursor: pointer; font-weight: 600; }
+  details ul { margin: 8px 0 4px; padding-left: 20px; }
+  .muted { color: var(--muted); }
+  .asm { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 0 8px; margin-left: 4px; }
+  footer { color: var(--muted); font-size: 14px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+  <span class="tag">PRD · approved</span>
+  <h1>🔍 Catch the AI: Product Requirements</h1>
+  <p class="lede">Paste your notes, learn a clean summary, then prove you understood by catching 3 fair mistakes.</p>
+
+  <section class="card grow">
+    <h2>How the plan grew</h2>
+    <p>Scope said: <em>“find and correct 3 mistakes, with hints.”</em><br>
+    Now we know exactly what that means: tap and type in your own words, a check on meaning against the <strong>saved correct fact</strong>, “Right spot 👀” vs. “Close! 🤏” vs. “look again,” a nudge after 2 tries, a hint that points to the paragraph, <strong>Show answers</strong>, a red CAUGHT ✓ stamp, and confetti.</p>
+  </section>
+
+  <section class="card">
+    <h2>The core journey</h2>
+    <svg viewBox="0 0 780 230" role="img" aria-label="Start, Learn, Catch and Review screens in order; Catch loops on each tap; Review's Next case button returns to Start.">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker></defs>
+      <g font-size="13" text-anchor="middle">
+        <rect x="10" y="60" width="160" height="90" rx="12" fill="none" stroke="#888" stroke-width="2"/>
+        <text x="90" y="92" font-size="16" font-weight="700">Start</text>
+        <text x="90" y="114">paste notes or</text><text x="90" y="132">Try an example</text>
+        <line x1="170" y1="105" x2="203" y2="105" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <text x="187" y="95" font-size="11">Learn</text>
+
+        <rect x="205" y="60" width="160" height="90" rx="12" fill="none" stroke="#888" stroke-width="2"/>
+        <text x="285" y="92" font-size="16" font-weight="700">Learn</text>
+        <text x="285" y="114">4–6 clean points</text><text x="285" y="132">(accurate)</text>
+        <line x1="365" y1="105" x2="398" y2="105" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <text x="382" y="95" font-size="11">test me</text>
+
+        <rect x="400" y="60" width="170" height="90" rx="12" fill="none" style="stroke:var(--accent)" stroke-width="3"/>
+        <text x="485" y="92" font-size="16" font-weight="700" style="fill:var(--accent)">Catch (case file)</text>
+        <text x="485" y="114">3 planted mistakes</text><text x="485" y="132">+ saved correct facts</text>
+        <path d="M455,60 C455,15 515,15 515,58" fill="none" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <text x="485" y="22" font-size="11">tap → type → feedback</text>
+        <line x1="570" y1="105" x2="603" y2="105" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <text x="587" y="88" font-size="11">3 caught 🎉</text>
+        <text x="587" y="125" font-size="11">or Show answers</text>
+
+        <rect x="605" y="60" width="165" height="90" rx="12" fill="none" stroke="#888" stroke-width="2"/>
+        <text x="687" y="92" font-size="16" font-weight="700">Review</text>
+        <text x="687" y="114">3 numbers + label</text><text x="687" y="132">what to revise</text>
+        <path d="M687,150 C687,215 90,215 90,152" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#a)"/>
+        <text x="390" y="222" font-size="12">🔍 Next case: paste your next chapter</text>
+      </g>
+    </svg>
+  </section>
+
+  <section class="card">
+    <h2>Screen by screen</h2>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-k="start" aria-selected="true">1 · Start</button>
+      <button role="tab" data-k="learn" aria-selected="false">2 · Learn</button>
+      <button role="tab" data-k="catch" aria-selected="false">3 · Catch</button>
+      <button role="tab" data-k="review" aria-selected="false">4 · Review</button>
+    </div>
+
+    <div class="panel" data-p="start">
+      <div class="mock">
+        <strong>🔍 Catch the AI</strong><br><span class="muted">Prove you understood, not just memorised.</span>
+        <div class="msg muted">Paste your notes here…</div>
+        <span class="pill">Try an example</span> <span class="pill">Learn</span>
+      </div>
+      <h3>States</h3>
+      <ul>
+        <li><strong>Empty box:</strong> Learn is disabled, with the hint “Paste your notes first 📝”</li>
+        <li><strong>Too short</strong> (fewer than about 4 sentences): “This is too short to hide 3 mistakes 🔍 Paste a bit more, like a full paragraph or a few points.” It also suggests Try an example.</li>
+      </ul>
+      <h3>How we'll know it works</h3>
+      <ul class="check">
+        <li>Try an example fills in the Law of Demand notes, and Learn becomes clickable</li>
+        <li>An empty box means Learn is disabled and the hint shows</li>
+      </ul>
+    </div>
+
+    <div class="panel" data-p="learn" hidden>
+      <div class="mock">
+        • When <strong>price</strong> rises, <strong>quantity demanded</strong> falls.<br>
+        • …4–6 points, each 1–2 sentences…<br><br>
+        <span class="pill">I'm ready, test me</span>
+      </div>
+      <p>The summary uses <strong>only your notes</strong>, is accurate, and has no mistakes yet.</p>
+      <h3>How we'll know it works</h3>
+      <ul class="check">
+        <li>4–6 points, each 1–2 sentences, with bold key terms</li>
+        <li>No stray symbols (<code>**</code>, <code>#</code>), no long paragraphs, no facts that aren't in the notes</li>
+      </ul>
+    </div>
+
+    <div class="panel" data-p="catch" hidden>
+      <div class="mock">
+        <div class="bar"><span class="banner">⚠ 3 mistakes are hidden here</span><span class="pill">1 of 3 found</span><span class="pill">Hint</span><span class="pill">Show answers</span></div>
+        <s>When price rises, demand rises.</s> → demand falls <span class="stamp">CAUGHT ✓</span><br>
+        …other sentences, each tappable…
+      </div>
+      <h3>What happens when you tap and type</h3>
+      <table>
+        <tr><th>Situation</th><th>Student sees</th><th>Counts as</th></tr>
+        <tr><td>Real mistake, correct idea (any words)</td><td>Red <strong>CAUGHT ✓</strong> stamp, counter goes up</td><td>found</td></tr>
+        <tr><td>Real mistake, wrong fix</td><td>“Right spot 👀 but that's not the correct fix. Check your notes and try again.”</td><td>wrong tap</td></tr>
+        <tr><td>Real mistake, half-right fix</td><td>“Close! 🤏 What exactly changes?”</td><td>try again</td></tr>
+        <tr><td>2 wrong fixes on the same sentence</td><td>Small nudge, e.g., “Think about what happens to demand when price goes up”</td><td>(nudge)</td></tr>
+        <tr><td>Tapped a correct sentence</td><td>“This one is correct, look again” + a short reason why</td><td>wrong tap</td></tr>
+        <tr><td>Hint</td><td>Which paragraph has an unfound mistake</td><td>hint used</td></tr>
+        <tr><td>Show answers</td><td>Round ends, unfound mistakes are “missed”</td><td>missed</td></tr>
+        <tr><td>3rd mistake caught</td><td>🎉 Confetti, then Review</td><td>round ends</td></tr>
+      </table>
+      <h3>Fairness rules</h3>
+      <ul>
+        <li>Exactly 3 mistakes, and each one <strong>clearly contradicts your notes</strong>. No trick wording.</li>
+        <li>The correct fact is <strong>saved when each mistake is planted</strong>, and checking compares your answer with it.</li>
+      </ul>
+      <h3>How we'll know it works</h3>
+      <ul class="check">
+        <li>“Demand goes down” is accepted as CAUGHT ✓ (meaning, not exact words)</li>
+        <li>“Demand stays the same” shows “Right spot 👀…” and isn't counted as found</li>
+        <li>Tapping a correct sentence shows “look again” + a reason, and the wrong-tap count goes up</li>
+        <li>The nudge appears after 2 wrong fixes</li>
+        <li>The counter is always right, and the 3rd catch → confetti → Review</li>
+        <li>Show answers → unfound mistakes are marked “missed”</li>
+      </ul>
+    </div>
+
+    <div class="panel" data-p="review" hidden>
+      <div class="mock">
+        <strong>Mistakes found: 2 of 3 · Wrong taps: 1 · Hints used: 1</strong><br>
+        🙂💪 <strong>Getting there</strong>
+        <div class="msg">📌 Revise: how price affects demand. Your notes say: when price rises, demand falls.</div>
+        <span class="pill">🔍 Next case: paste your next chapter</span>
+      </div>
+      <h3>Result labels (no marks number)</h3>
+      <table>
+        <tr><td>3 found, 0–1 wrong taps, no hints</td><td>👍😄 Strong understanding</td></tr>
+        <tr><td>2 found, or 2+ wrong taps, or any hints</td><td>🙂💪 Getting there</td></tr>
+        <tr><td>0–1 found</td><td>📚 Revise this chapter + a Gen Z motivation line<br><span class="muted">“No cap, every topper started here 💯 Read it once more and come back stronger 🚀”</span></td></tr>
+      </table>
+      <h3>How we'll know it works</h3>
+      <ul class="check">
+        <li>The three numbers match what happened in the round</li>
+        <li>The label follows the rules (e.g., 3 found + 1 hint → Getting there)</li>
+        <li>No score out of 100 anywhere</li>
+        <li>All 3 mistakes are shown with their correct facts, marked caught or missed</li>
+        <li>The revise list includes only missed or wrongly answered mistakes, or “Nothing to revise, case closed 🕵️✅”</li>
+        <li>Next case goes to an empty Start screen</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Look and feel</h2>
+    <ul>
+      <li>🕵️ <strong>Detective theme:</strong> magnifying glass, Catch screen as a case file, red <span class="stamp">CAUGHT ✓</span> stamps</li>
+      <li>🎉 <strong>Small game moments:</strong> the counter going up, confetti on all 3</li>
+      <li>📄 <strong>Warm paper-like background, dark text, one strong accent color</strong></li>
+      <li>🌙 <strong>Readable at night on a phone:</strong> clean text area, no crowded screens</li>
+      <li>🚫 <strong>Avoid:</strong> messy symbols, long paragraphs, error codes</li>
+    </ul>
+  </section>
+
+  <h2 style="margin-top:28px">Other states</h2>
+  <details>
+    <summary>Loading, errors, persistence</summary>
+    <ul>
+      <li><strong>Waiting for the AI:</strong> “Investigating your notes… 🔍” <span class="asm">assumption</span></li>
+      <li><strong>AI couldn't respond:</strong> friendly “try again” + a retry button, no error codes <span class="asm">assumption</span></li>
+      <li><strong>Persistence:</strong> nothing is saved. Refreshing or Next case starts fresh.</li>
+    </ul>
+  </details>
+  <details>
+    <summary>⏳ Deferred &amp; non-goals</summary>
+    <ul>
+      <li><strong>Deferred:</strong> topic-only input, accounts/history, deploying online, PDF upload</li>
+      <li><strong>Non-goals:</strong> no marks/grades, no trick mistakes, no facts beyond your notes, no login/leaderboards</li>
+    </ul>
+  </details>
+  <details open>
+    <summary>❓ Open questions (none block the spec)</summary>
+    <ul>
+      <li>Does a mistake caught <em>after</em> wrong fixes also go on the revise list? <span class="asm">assumed yes</span></li>
+      <li>Can the hint be used more than once? <span class="asm">assumed yes, once per unfound mistake</span></li>
+      <li>Maximum notes length: decide in <code>4-spec</code></li>
+    </ul>
+  </details>
+
+  <footer>Companion to <code>devpost/prd.md</code> (the Markdown file is the official version).</footer>
+</main>
+<script>
+  document.querySelectorAll('.tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', x === b); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.hidden = p.dataset.p !== b.dataset.k; });
+    });
+  });
+</script>
+</body>
+</html>

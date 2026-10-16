@@ -1,0 +1,7 @@
+{
+  "name": "catch-the-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A study app where you prove you understood your notes by catching 3 mistakes the AI hid in them.",
+  "type": "module"
+}

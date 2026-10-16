@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catch the AI 🔍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <!-- Start screen -->
+    <section id="start" class="screen">
+      <h1>Catch the AI <span aria-hidden="true">🔍</span></h1>
+      <p class="tagline">Prove you understood, not just memorised.</p>
+      <label for="notes" class="visually-hidden">Your notes</label>
+      <textarea id="notes" placeholder="Paste your notes here"></textarea>
+      <p id="notes-message" class="message" aria-live="polite"></p>
+      <div class="row">
+        <button id="example-btn" class="secondary">Try an example</button>
+        <button id="learn-btn" class="primary" disabled>Learn</button>
+      </div>
+    </section>
+
+    <!-- Loading / error (shared) -->
+    <section id="waiting" class="screen" hidden>
+      <p id="waiting-text" class="big-message">Investigating your notes… 🔍</p>
+      <button id="retry-btn" class="primary" hidden>Try again</button>
+      <button id="back-btn" class="secondary" hidden>Back to my notes</button>
+    </section>
+
+    <!-- Learn screen -->
+    <section id="learn" class="screen" hidden>
+      <h2>Here's what your notes say 📖</h2>
+      <div id="summary" class="card"></div>
+      <button id="test-btn" class="primary">I'm ready, test me</button>
+    </section>
+
+    <!-- Catch screen -->
+    <section id="catch" class="screen" hidden>
+      <div class="case-file">
+        <div class="case-tab">CASE FILE</div>
+        <p class="banner">3 mistakes are hidden here</p>
+        <p class="coming-soon">The case file opens in the next build step 🕵️</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="sample-notes.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catch the AI — Scope</title>
+<style>
+  :root {
+    --bg: #f7f6f2; --card: #ffffff; --ink: #1d1d1f; --muted: #5d5d66; --line: #e2e0d8;
+    --learn: #2f6fd6; --catch: #d9480f; --review: #2b8a3e; --accent-bg: #fff4e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #151517; --card: #1f1f23; --ink: #ececf1; --muted: #a2a2ad; --line: #34343b;
+      --learn: #6ea0ff; --catch: #ff8a4c; --review: #5ccf74; --accent-bg: #2b2016;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  .tag { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; }
+  h1 { font-size: clamp(30px, 6vw, 44px); margin: 12px 0 4px; line-height: 1.15; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0 0 28px; }
+  h2 { font-size: 20px; margin: 0 0 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 16px 0; }
+  .kernel { border-left: 5px solid var(--catch); background: var(--accent-bg); }
+  .quote { font-style: italic; font-size: 18px; margin: 10px 0 0; }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { fill: var(--ink); font-family: inherit; }
+  .steps { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .steps button { flex: 1 1 140px; padding: 10px; border-radius: 10px; border: 2px solid var(--line);
+    background: transparent; color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+  .steps button[aria-selected="true"][data-k="learn"] { border-color: var(--learn); color: var(--learn); }
+  .steps button[aria-selected="true"][data-k="catch"] { border-color: var(--catch); color: var(--catch); }
+  .steps button[aria-selected="true"][data-k="review"] { border-color: var(--review); color: var(--review); }
+  .panel[hidden] { display: none; }
+  .mock { border: 1px dashed var(--line); border-radius: 10px; padding: 12px; margin-top: 10px; font-size: 15px; }
+  .banner { background: var(--catch); color: #fff; border-radius: 8px; padding: 6px 10px; font-weight: 600; margin-bottom: 8px; }
+  .s { padding: 4px 6px; border-radius: 6px; }
+  .s.ok { background: color-mix(in srgb, var(--review) 22%, transparent); }
+  .s.no { background: color-mix(in srgb, var(--catch) 18%, transparent); }
+  .demo ol { padding-left: 20px; margin: 0; }
+  .demo li { margin: 4px 0; }
+  .wow { margin-top: 12px; font-weight: 600; }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 8px 0; background: var(--card); }
+  summary { cursor: pointer; font-weight: 600; }
+  summary .count { color: var(--muted); font-weight: 400; }
+  details ul { margin: 8px 0 4px; padding-left: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .grid .card { margin: 0; }
+  .muted { color: var(--muted); }
+  footer { color: var(--muted); font-size: 14px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+  <span class="tag">Scope · approved</span>
+  <h1>Catch the AI</h1>
+  <p class="lede">A study app where you prove you understood your own notes by catching 3 mistakes the AI hid in them.</p>
+
+  <section class="card kernel">
+    <h2>The unique kernel</h2>
+    <p>The AI is <strong>confidently wrong on purpose</strong>, and you can only win if you actually understand. Corrections are judged on <strong>meaning, not exact words</strong>, and <strong>wrong taps count against you</strong>, so memorising and guessing don't work.</p>
+    <p class="quote">“Marks show what you scored, not what you understood.”</p>
+  </section>
+
+  <section class="card">
+    <h2>How it fits together</h2>
+    <svg viewBox="0 0 760 250" role="img" aria-label="A student pastes notes, which flow through Learn, Catch and Review; Review shows what to revise and leads back to the next chapter.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+        </marker>
+      </defs>
+      <!-- student + notes -->
+      <rect x="10" y="70" width="130" height="80" rx="12" fill="none" stroke="#888" stroke-dasharray="4 4"/>
+      <text x="75" y="102" text-anchor="middle" font-size="15" font-weight="600">Student</text>
+      <text x="75" y="124" text-anchor="middle" font-size="13">pastes own notes</text>
+      <text x="75" y="142" text-anchor="middle" font-size="11" opacity=".7">(source of truth)</text>
+      <line x1="140" y1="110" x2="178" y2="110" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+      <!-- learn -->
+      <rect x="180" y="70" width="160" height="80" rx="12" fill="none" stroke="var(--learn)" stroke-width="3"/>
+      <text x="260" y="102" text-anchor="middle" font-size="16" font-weight="700" style="fill:var(--learn)">1 · Learn</text>
+      <text x="260" y="124" text-anchor="middle" font-size="13">short clear summary</text>
+      <line x1="340" y1="110" x2="378" y2="110" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+      <!-- catch -->
+      <rect x="380" y="70" width="170" height="80" rx="12" fill="none" stroke="var(--catch)" stroke-width="3"/>
+      <text x="465" y="102" text-anchor="middle" font-size="16" font-weight="700" style="fill:var(--catch)">2 · Catch</text>
+      <text x="465" y="124" text-anchor="middle" font-size="13">find 3 hidden mistakes</text>
+      <line x1="550" y1="110" x2="588" y2="110" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+      <!-- review -->
+      <rect x="590" y="70" width="160" height="80" rx="12" fill="none" stroke="var(--review)" stroke-width="3"/>
+      <text x="670" y="102" text-anchor="middle" font-size="16" font-weight="700" style="fill:var(--review)">3 · Review</text>
+      <text x="670" y="124" text-anchor="middle" font-size="13">score + what to revise</text>
+      <!-- loop back -->
+      <path d="M670,150 C670,225 75,225 75,152" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#a)"/>
+      <text x="380" y="240" text-anchor="middle" font-size="13" opacity=".8">next chapter's notes</text>
+      <!-- proof -->
+      <text x="465" y="40" text-anchor="middle" font-size="13" font-weight="600">meaning-based check · wrong taps counted</text>
+      <line x1="465" y1="48" x2="465" y2="68" stroke="var(--catch)" stroke-width="2"/>
+    </svg>
+  </section>
+
+  <section class="card">
+    <h2>The core loop, step by step</h2>
+    <div class="steps" role="tablist">
+      <button role="tab" data-k="learn" aria-selected="true">1 · Learn</button>
+      <button role="tab" data-k="catch" aria-selected="false">2 · Catch</button>
+      <button role="tab" data-k="review" aria-selected="false">3 · Review</button>
+    </div>
+    <div class="panel" data-p="learn">
+      <p>Paste your notes. The AI teaches a <strong>short, clear summary</strong> so you learn the right version first.</p>
+    </div>
+    <div class="panel" data-p="catch" hidden>
+      <p>Click <strong>“Test me”</strong>. The same content appears sentence by sentence. Tap a sentence you think is wrong and type the correct idea in your own words.</p>
+      <div class="mock">
+        <div class="banner">⚠ 3 mistakes are hidden here · 1 of 3 found</div>
+        <span class="s ok">✓ When price rises, demand falls.</span>
+        <span class="s no">“This one is correct, look again” + why</span>
+        <span class="s">…other sentences…</span>
+      </div>
+      <p class="muted">Correct correction → turns green, counter goes up. Wrong tap → “look again” with a short reason. Hint → shows which paragraph has a mistake.</p>
+    </div>
+    <div class="panel" data-p="review" hidden>
+      <p>Your <strong>score</strong> (including wrong taps), <strong>every mistake revealed</strong> with the correct fact, and <strong>what to revise</strong>.</p>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Who it's for</h2>
+      <p>A college student like you, studying at home. They've just read a chapter and want to check they really understood it, often the night before the exam, on a phone or laptop.</p>
+    </section>
+    <section class="card">
+      <h2>How it should feel</h2>
+      <p>Like a game. The best moment is catching the AI being confidently wrong, and you feel proud. It's honest about understanding versus memorising.</p>
+    </section>
+  </div>
+
+  <section class="card demo">
+    <h2>What “working” looks like: the 1-minute demo</h2>
+    <ol>
+      <li>Paste a short note on the <strong>Law of Demand</strong> → click <strong>Learn</strong> → a clear summary appears</li>
+      <li>Click <strong>Test me</strong> → banner: “3 mistakes are hidden here”</li>
+      <li>Tap “when price rises, demand rises” → type “demand falls” → it turns green, <strong>1 of 3 found</strong></li>
+      <li>Tap a correct sentence by mistake → “This one is correct, look again”</li>
+      <li>Finish → <strong>Review</strong>: score, every mistake explained, what to revise</li>
+    </ol>
+    <p class="wow">✨ “Oh, that's cool”: catching the AI being confidently wrong.</p>
+  </section>
+
+  <section class="card">
+    <h2>Why this matters to you</h2>
+    <p class="quote">“In exams we memorise without knowing why a concept exists or how to use it. Even toppers forget it when life needs it.”</p>
+    <p class="muted">Also: avoid DIVI MIND's problems with wrong answers and messy formatting.</p>
+  </section>
+
+  <h2 style="margin-top:28px">The boundary</h2>
+  <details open>
+    <summary>✅ Now: in the proof of concept <span class="count">(4)</span></summary>
+    <ul>
+      <li><strong>Pasted notes only.</strong> They're the source of truth for the summary, the mistakes, and checking.</li>
+      <li>Learn → Catch (exactly 3 mistakes, banner, tap + type, meaning-based check, counter, “look again” + reason, paragraph hint) → Review (score, wrong taps, mistakes with correct facts, what to revise)</li>
+      <li>Works on laptop and phone-sized screens</li>
+      <li>One session at a time, nothing saved</li>
+    </ul>
+  </details>
+  <details>
+    <summary>⏳ Later <span class="count">(4)</span></summary>
+    <ul>
+      <li>Typing just a topic instead of notes</li>
+      <li>Accounts and saved history</li>
+      <li>Deploying online (optional for the hackathon)</li>
+      <li>File/PDF upload</li>
+    </ul>
+  </details>
+  <details>
+    <summary>✂️ Cut, with reasons <span class="count">(2)</span></summary>
+    <ul>
+      <li><strong>Topic-only input (for now):</strong> no source of truth, so the AI could invent wrong “facts,” the DIVI MIND problem.</li>
+      <li><strong>Login and saving:</strong> not needed to prove the idea in a 1-minute demo.</li>
+    </ul>
+  </details>
+
+  <section class="card"><h2>Notes carried to the PRD</h2><ul><li><strong>Fair mistakes:</strong> each one clearly contradicts your notes. No trick wording.</li><li><strong>Saved correct fact:</strong> when a mistake is planted, the correct fact is saved, and checking compares the answer with it.</li></ul></section>
+  <footer>Companion to <code>devpost/scope.md</code> (the Markdown file is the official version).</footer>
+</main>
+<script>
+  document.querySelectorAll('.steps button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.steps button').forEach(function (x) { x.setAttribute('aria-selected', x === b); });
+      document.querySelectorAll('.panel').forEach(function (p) { p.hidden = p.dataset.p !== b.dataset.k; });
+    });
+  });
+</script>
+</body>
+</html>

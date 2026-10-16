@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catch the AI — Spec</title>
+<style>
+  :root {
+    --bg: #f6f1e7; --card: #fffdf8; --ink: #22201c; --muted: #6b655b; --line: #e3dccd;
+    --accent: #b3261e; --soft: #fbeee9; --code: #efe8da; --blue: #2f6fd6; --green: #2b8a3e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1815; --card: #24211d; --ink: #efe9dd; --muted: #a9a193; --line: #3a362f;
+      --accent: #ff6b5a; --soft: #33231f; --code: #2e2a24; --blue: #6ea0ff; --green: #5ccf74;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 32px 16px 64px; }
+  .tag { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 2px 10px; }
+  h1 { font-size: clamp(28px, 6vw, 40px); margin: 12px 0 4px; line-height: 1.15; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+  h2 { font-size: 20px; margin: 0 0 8px; }
+  h3 { font-size: 16px; margin: 14px 0 6px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; margin: 16px 0; }
+  .hi { border-left: 5px solid var(--accent); background: var(--soft); }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { fill: var(--ink); font-family: inherit; }
+  code, pre { font-family: ui-monospace, Consolas, monospace; font-size: 14px; }
+  code { background: var(--code); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--code); padding: 12px; border-radius: 10px; overflow-x: auto; margin: 8px 0; }
+  .stepper { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+  .stepper button { padding: 8px 14px; border-radius: 10px; border: 2px solid var(--line); background: transparent;
+    color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+  .stepper button:disabled { opacity: .4; cursor: default; }
+  .dots { display: flex; gap: 6px; }
+  .dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .dots span.on { background: var(--accent); }
+  .step h3 { margin-top: 4px; }
+  .who { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 99px; margin-right: 4px; }
+  .who.web { color: var(--blue); border: 1px solid var(--blue); }
+  .who.fn { color: var(--accent); border: 1px solid var(--accent); }
+  .who.ai { color: var(--green); border: 1px solid var(--green); }
+  details { border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin: 8px 0; background: var(--card); }
+  summary { cursor: pointer; font-weight: 600; }
+  summary small { color: var(--muted); font-weight: 400; }
+  details ul, details ol { margin: 8px 0 4px; padding-left: 20px; }
+  .muted { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .grid .card { margin: 0; }
+  .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: -2px; border: 1px solid var(--line); margin-right: 4px; }
+  footer { color: var(--muted); font-size: 14px; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+  <span class="tag">Spec · approved</span>
+  <h1>🔍 Catch the AI: Technical Spec</h1>
+  <p class="lede">The blueprint: two pieces, two AI jobs, and everything else plain code.</p>
+
+  <section class="card hi">
+    <h2>In plain language</h2>
+    <p><strong>The webpage</strong> shows the 4 screens and runs the game. <strong>One serverless function</strong> on Vercel keeps the secret Groq key and does two jobs: <em>make the case</em> (notes → summary + 3 fair mistakes + saved facts, as JSON) and <em>check the fix</em> (answer vs. saved fact → correct / close / wrong). Counting, scoring and labels are plain code, so they're always exactly right.</p>
+    <p class="muted">DIVI MIND lessons built in: notes are the only source of truth, and JSON instead of free text (no stray <code>**</code>).</p>
+  </section>
+
+  <section class="card">
+    <h2>Architecture</h2>
+    <svg viewBox="0 0 780 270" role="img" aria-label="The webpage in the browser sends make-case and check-fix requests to the serverless function on Vercel, which holds the Groq key and calls Groq; Groq returns JSON, the function validates it and returns it to the webpage.">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker></defs>
+      <g text-anchor="middle" font-size="13">
+        <rect x="10" y="40" width="230" height="190" rx="14" fill="none" style="stroke:var(--blue)" stroke-width="3"/>
+        <text x="125" y="68" font-size="16" font-weight="700" style="fill:var(--blue)">Webpage (browser)</text>
+        <text x="125" y="94">index.html · style.css · app.js</text>
+        <text x="125" y="120">4 screens + game logic</text>
+        <text x="125" y="146">case + round data in memory</text>
+        <text x="125" y="172" opacity=".75">(nothing saved)</text>
+        <text x="125" y="208" font-size="12" opacity=".75">no secret key here</text>
+
+        <rect x="290" y="40" width="210" height="190" rx="14" fill="none" style="stroke:var(--accent)" stroke-width="3"/>
+        <text x="395" y="68" font-size="16" font-weight="700" style="fill:var(--accent)">Serverless function</text>
+        <text x="395" y="94">api/ai.js (on Vercel)</text>
+        <text x="395" y="120">🔑 GROQ_API_KEY</text>
+        <text x="395" y="146">instructions: _prompts.js</text>
+        <text x="395" y="172">validates JSON, retries once</text>
+
+        <rect x="550" y="40" width="220" height="190" rx="14" fill="none" style="stroke:var(--green)" stroke-width="3"/>
+        <text x="660" y="68" font-size="16" font-weight="700" style="fill:var(--green)">Groq</text>
+        <text x="660" y="94">openai/gpt-oss-120b</text>
+        <text x="660" y="120">strict JSON schema</text>
+        <text x="660" y="146">temperature 0.2</text>
+        <text x="660" y="172" font-size="12" opacity=".75">(verify at build step 1)</text>
+
+        <line x1="240" y1="100" x2="288" y2="100" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <line x1="288" y1="170" x2="242" y2="170" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <text x="265" y="30" font-size="12">POST /api/ai</text>
+        <text x="265" y="255" font-size="12">clean JSON back</text>
+        <line x1="500" y1="100" x2="548" y2="100" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <line x1="548" y1="170" x2="502" y2="170" stroke="#888" stroke-width="2" marker-end="url(#a)"/>
+        <text x="525" y="30" font-size="12">make-case / check-fix</text>
+      </g>
+    </svg>
+  </section>
+
+  <section class="card">
+    <h2>Follow one case through the system</h2>
+    <div class="stepper">
+      <button id="prev">← Back</button>
+      <div class="dots" id="dots"></div>
+      <button id="next">Next →</button>
+    </div>
+    <div id="steps">
+      <div class="step"><h3>1 · Paste notes</h3><p><span class="who web">webpage</span>Checks: empty → Learn disabled · fewer than 4 sentences → “too short” · over 6,000 characters → “one section at a time.” <b>Try an example</b> loads <code>sample-notes.js</code>.</p><p class="muted">prd.md › Notes Input · States and Boundaries</p></div>
+      <div class="step" hidden><h3>2 · Click Learn → make the case</h3><p><span class="who web">webpage</span> sends <code>{action: "make-case", notes}</code> → <span class="who fn">function</span> adds the instructions → <span class="who ai">Groq</span> returns JSON: points, 3 mistakes, correct facts, topics, nudges, reasons → <span class="who fn">function</span> validates it (exactly 3, 4–6 points, no <code>*</code>/<code>#</code>) and retries once if broken.</p><p class="muted">prd.md › Planting the Mistakes · Learn Summary</p></div>
+      <div class="step" hidden><h3>3 · Learn screen</h3><p><span class="who web">webpage</span> shows the <b>correct</b> points, with bold terms added by the code (never raw <code>**</code>).</p><p class="muted">prd.md › Learn Summary</p></div>
+      <div class="step" hidden><h3>4 · Test me → Catch screen</h3><p><span class="who web">webpage</span> shows the same points with the 3 <code>wrong_text</code> sentences swapped in. <b>No new AI call</b>, because everything came back in step 2.</p><p class="muted">prd.md › Catching Mistakes</p></div>
+      <div class="step" hidden><h3>5 · Tap a sentence</h3><p><b>Not a mistake:</b> <span class="who web">webpage</span> shows “look again” + the saved <code>why</code>. Wrong taps +1. No AI.<br><b>A real mistake:</b> the student types a fix → <span class="who fn">function</span> “check-fix” with the <b>saved correct fact</b> → <span class="who ai">Groq</span>: <code>correct</code> / <code>close</code> / <code>wrong</code> → <span class="who web">webpage</span> shows CAUGHT ✓ / “Close! 🤏” / “Right spot 👀.” A nudge appears after 2 tries.</p><p class="muted">prd.md › Catching Mistakes</p></div>
+      <div class="step" hidden><h3>6 · Hint / Show answers</h3><p><span class="who web">webpage</span> only: a hint highlights a point with an unfound mistake; Show answers marks unfound mistakes as missed.</p><p class="muted">prd.md › Catching Mistakes</p></div>
+      <div class="step" hidden><h3>7 · 3 caught → 🎉 → Review</h3><p><span class="who web">webpage</span> builds Review from the round data: 3 numbers, label rules, all mistakes with facts, revise list. <b>No AI.</b></p><p class="muted">prd.md › Review and Result</p></div>
+      <div class="step" hidden><h3>8 · Next case</h3><p><span class="who web">webpage</span> clears its memory and returns to an empty Start screen. Nothing is saved anywhere.</p><p class="muted">prd.md › States and Boundaries</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>🎯 Your learning focus: the instructions to Groq</h2>
+    <p class="muted">These live in <code>api/_prompts.js</code>. Each rule fixes a real problem.</p>
+    <details open>
+      <summary>Make the case <small>(when Learn is clicked)</small></summary>
+      <ol>
+        <li><b>Use ONLY the student's notes.</b> No outside facts. <span class="muted">← fixes DIVI's “Karnataka CM” problem</span></li>
+        <li>4–6 points, 1–2 short sentences each, key terms in a <code>bold</code> list, <b>plain text with no markdown symbols</b>. <span class="muted">← fixes raw <code>**</code></span></li>
+        <li>Exactly 3 sentences, in 3 different points, made wrong.</li>
+        <li><b>Fair:</b> each one clearly contradicts a specific fact in the notes. No tricks, tiny wording changes, or debatable claims.</li>
+        <li>For each mistake, save <code>correct_fact</code>, <code>topic</code>, and <code>nudge</code>.</li>
+        <li>For every sentence, give <code>why</code> (one line).</li>
+      </ol>
+    </details>
+    <details>
+      <summary>Check the fix <small>(each correction)</small></summary>
+      <ol>
+        <li>Compare only with the <b>saved correct fact</b>, not with general knowledge.</li>
+        <li>Judge <b>meaning, not wording</b>.</li>
+        <li><code>correct</code> = states the key idea · <code>close</code> = partly right · <code>wrong</code> = contradicts, repeats the mistake, or is unrelated.</li>
+      </ol>
+    </details>
+    <details>
+      <summary>How you'll test them during the build</summary>
+      <ul>
+        <li>Sample notes + one set of your own B.Com notes → are the 3 mistakes fair?</li>
+        <li>“demand goes down” → correct · “demand stays the same” → wrong · a half answer → close</li>
+        <li>If something's off, <b>you</b> decide which rule to tighten.</li>
+      </ul>
+    </details>
+    <p class="muted">Temperature 0.2: the AI's “creativity” dial, turned down for consistent answers.</p>
+  </section>
+
+  <section class="card">
+    <h2>Case data (what Groq sends back)</h2>
+<pre>{
+  "points": [ { "sentences": [
+      { "text": "When price rises, quantity demanded falls.",
+        "bold": ["price", "quantity demanded"],
+        "why":  "Your notes say demand moves opposite to price." } ] } ],
+  "mistakes": [
+    { "point": 0, "sentence": 0,
+      "wrong_text":   "When price rises, quantity demanded also rises.",
+      "correct_fact": "When price rises, quantity demanded falls.",
+      "topic": "how price affects demand",
+      "nudge": "Think about what happens to demand when price goes up." } ]
+}</pre>
+    <p class="muted">Kept in the webpage's memory only. Refresh or Next case → gone. <b>Your choice:</b> peeking is possible, but “cheating only cheats yourself.”</p>
+  </section>
+
+  <section class="card">
+    <h2>Files</h2>
+<pre>catch-the-ai/
+├── index.html        # the 4 screens
+├── style.css         # detective look
+├── app.js            # screens, game logic, Review, calls /api/ai
+├── sample-notes.js   # SAMPLE DATA for "Try an example"
+├── confetti.js       # small hand-made confetti
+├── api/
+│   ├── ai.js         # serverless function: key, make-case, check-fix, validation
+│   └── _prompts.js   # instructions to Groq + JSON schemas  ← learning focus
+├── package.json      # "type": "module", no extra packages
+├── .env.example      # GROQ_API_KEY=   (safe to commit)
+├── .env.local        # your real key   (git-ignored)
+└── README.md         # run + deploy steps</pre>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Run it on your laptop</h2>
+      <ol>
+        <li>Put <code>GROQ_API_KEY=…</code> in <code>.env.local</code></li>
+        <li><code>npx vercel dev</code> (log in the first time)</li>
+        <li>Open <code>http://localhost:3000</code></li>
+      </ol>
+      <p class="muted">Required for submission: demo video + public GitHub repo.</p>
+    </section>
+    <section class="card">
+      <h2>Optional: go live</h2>
+      <ol>
+        <li><code>npx vercel</code> (preview)</li>
+        <li>Add <code>GROQ_API_KEY</code> under Settings → Environment Variables</li>
+        <li><code>npx vercel --prod</code></li>
+      </ol>
+      <p class="muted">A bonus, not a replacement for the video.</p>
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Look and feel → styling</h2>
+    <ul>
+      <li><span class="swatch" style="background:#f6f1e7"></span>paper background · <span class="swatch" style="background:#22201c"></span>dark ink · <span class="swatch" style="background:#b3261e"></span>detective red (stamp, banner, buttons)</li>
+      <li>Typewriter font (Special Elite) for headings and stamps; Atkinson Hyperlegible for reading, with system-font fallbacks</li>
+      <li>About 18px text on phones, comfortable spacing, max width about 680px, roomy tap targets</li>
+      <li>Catch screen = “CASE FILE” folder card · rotated red CAUGHT ✓ stamp · hand-made confetti</li>
+    </ul>
+  </section>
+
+  <h2 style="margin-top:28px">More details</h2>
+  <details>
+    <summary>⚠️ Where it could break, and what the user sees</summary>
+    <ul>
+      <li><b>Broken AI output:</b> validate, retry once, then “Our detective got confused 🕵️ Try again”</li>
+      <li><b>Groq slow or down:</b> “Investigating your notes… 🔍,” then a friendly retry. No error codes.</li>
+      <li><b>Unfair mistake:</b> caught by testing two sets of notes, then tighten the instructions</li>
+      <li><b>Judging too strict or too loose:</b> the four known test answers, then adjust the instructions</li>
+    </ul>
+  </details>
+  <details>
+    <summary>✂️ Simplified on purpose</summary>
+    <ul>
+      <li>Answers kept in the webpage (your choice), no database, no login, no framework</li>
+      <li>One AI call makes the whole case: faster, and Catch always matches Learn</li>
+      <li>Hand-made confetti; built-in sample notes (labelled). The kernel is never faked.</li>
+    </ul>
+  </details>
+  <details>
+    <summary>📋 Decisions and open issues</summary>
+    <ul>
+      <li><b>Your decisions:</b> Groq + Vercel, no Supabase · plain HTML/CSS/JS + one function · answers in the webpage · 6,000-character limit · test locally first, deploy optional</li>
+      <li><b>Derived details:</b> gpt-oss-120b strict JSON (fallback: JSON mode) · “close” isn't a wrong tap but counts toward the nudge · “too short” = fewer than 4 sentences · one hint per unfound mistake</li>
+      <li><b>Verify at build step 1:</b> strict JSON support and free-tier limits for the model</li>
+    </ul>
+  </details>
+
+  <footer>Companion to <code>devpost/spec.md</code> (the Markdown file is the official version).</footer>
+</main>
+<script>
+  (function () {
+    var steps = document.querySelectorAll('#steps .step');
+    var dots = document.getElementById('dots');
+    var i = 0;
+    steps.forEach(function () { dots.appendChild(document.createElement('span')); });
+    function show() {
+      steps.forEach(function (s, k) { s.hidden = k !== i; });
+      dots.querySelectorAll('span').forEach(function (d, k) { d.className = k === i ? 'on' : ''; });
+      document.getElementById('prev').disabled = i === 0;
+      document.getElementById('next').disabled = i === steps.length - 1;
+    }
+    document.getElementById('prev').onclick = function () { if (i > 0) { i--; show(); } };
+    document.getElementById('next').onclick = function () { if (i < steps.length - 1) { i++; show(); } };
+    show();
+  })();
+</script>
+</body>
+</html>
