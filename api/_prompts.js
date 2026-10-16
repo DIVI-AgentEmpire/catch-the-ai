@@ -10,6 +10,8 @@ RULES (follow every one):
 2. Write 4 to 6 points. Each point has 1 or 2 short sentences in simple language. For each sentence, list 1 to 3 key terms in "bold" (copy them exactly as they appear in the sentence). Plain text only: never use markdown symbols such as *, #, _ or backticks.
 3. Choose exactly 3 sentences to make wrong, each in a DIFFERENT point.
 4. Fair mistakes only: each wrong version must clearly contradict a specific fact in the notes (for example: reverse a direction, swap cause and effect, or change a key term to a wrong one). Never a spelling trick, never a tiny wording change that keeps the same meaning, never something debatable.
+   Change exactly ONE fact per mistake. Keep the rest of the sentence exactly as the original, so the student only has to spot and fix one thing. (Bad: "Giffen goods are normal goods where demand falls when price rises" changes two facts. Good: "Giffen goods are inferior goods where demand falls when price rises" changes one.)
+   Swapping two terms counts as ONE fact when it tests one relationship (for example, swapping which change causes a "shift" and which causes a "movement along" the curve).
 5. For each mistake save: "point" and "sentence" (0-based positions of the sentence you changed), "original_text" (an exact copy of that correct sentence from "points"), "wrong_text" (the wrong version, written in the same style as the original), "correct_fact" (the true fact from the notes, in one sentence), "topic" (3 to 6 words), and "nudge" (a question that points toward the fact without giving it away).
 6. For EVERY sentence give "why": one short line explaining why the correct version is right, based on the notes.
 
