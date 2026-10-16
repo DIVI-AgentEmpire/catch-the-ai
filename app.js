@@ -112,6 +112,158 @@ function renderLearn() {
     .join("");
 }
 
-$("test-btn").addEventListener("click", () => showScreen("catch"));
+$("test-btn").addEventListener("click", startRound);
+
+// ---------- Catch screen ----------
+
+// Memory for the current round. Each list has one entry per mistake (0, 1, 2).
+let round = null;
+
+function startRound() {
+  round = {
+    found: [false, false, false],
+    attempts: [0, 0, 0], // non-correct fixes per mistake (for the nudge)
+    hadWrongFix: [false, false, false],
+    wrongTaps: 0,
+    hintsUsed: 0,
+    hinted: [],
+    missed: [],
+    checkedSentences: new Set(), // correct sentences already tapped ("p-s")
+  };
+  renderCatch();
+  showScreen("catch");
+}
+
+// Which mistake (0–2) sits at this point/sentence, or -1 if the sentence is correct.
+function mistakeAt(p, s) {
+  return caseData.mistakes.findIndex((m) => m.point === p && m.sentence === s);
+}
+
+function renderCatch() {
+  $("found-count").textContent = round.found.filter(Boolean).length;
+  $("round-message").hidden = true;
+  $("case-body").innerHTML = caseData.points
+    .map((point, p) => {
+      const sentences = point.sentences
+        .map((s, si) => {
+          const m = mistakeAt(p, si);
+          // On the Catch screen, the planted wrong version replaces the correct sentence.
+          const text = m === -1 ? s.text : caseData.mistakes[m].wrong_text;
+          return `<button class="sentence" data-p="${p}" data-s="${si}"><span class="wrong-text">${withBold(text, s.bold)}</span></button>
+                  <div class="feedback" id="fb-${p}-${si}" aria-live="polite"></div>`;
+        })
+        .join("");
+      return `<div class="point" id="point-${p}">${sentences}</div>`;
+    })
+    .join("");
+}
+
+$("case-body").addEventListener("click", (e) => {
+  const btn = e.target.closest(".sentence");
+  if (btn) return tapSentence(btn, Number(btn.dataset.p), Number(btn.dataset.s));
+  if (e.target.closest(".check-btn")) return checkFix(Number(e.target.closest(".check-btn").dataset.m));
+  if (e.target.closest(".cancel-btn")) return closeFixBox();
+});
+
+function closeFixBox() {
+  document.querySelectorAll(".fix-box").forEach((box) => box.remove());
+  document.querySelectorAll(".sentence.open").forEach((b) => b.classList.remove("open"));
+}
+
+function tapSentence(btn, p, s) {
+  const m = mistakeAt(p, s);
+  const fb = $(`fb-${p}-${s}`);
+
+  if (m === -1) {
+    // A correct sentence: count the wrong tap once, explain why it's right.
+    const key = `${p}-${s}`;
+    if (round.checkedSentences.has(key)) return;
+    round.checkedSentences.add(key);
+    round.wrongTaps++;
+    btn.classList.add("checked");
+    fb.innerHTML = `<div>This one is correct, look again 👀</div><div class="why">${escapeHTML(caseData.points[p].sentences[s].why)}</div>`;
+    return;
+  }
+
+  // A real mistake: open the correction box under it.
+  if (btn.classList.contains("open")) return;
+  closeFixBox();
+  btn.classList.add("open");
+  fb.insertAdjacentHTML(
+    "afterend",
+    `<div class="fix-box" id="fix-${m}">
+       <label for="fix-input-${m}" class="visually-hidden">Your correction</label>
+       <textarea id="fix-input-${m}" maxlength="500" placeholder="What's the correct idea? Use your own words."></textarea>
+       <div class="row">
+         <button class="primary check-btn" data-m="${m}">Check the Fix</button>
+         <button class="secondary cancel-btn">Cancel</button>
+       </div>
+     </div>`
+  );
+  $(`fix-input-${m}`).focus();
+}
+
+async function checkFix(m) {
+  const input = $(`fix-input-${m}`);
+  const answer = input.value.trim();
+  const mistake = caseData.mistakes[m];
+  const fb = $(`fb-${mistake.point}-${mistake.sentence}`);
+  if (!answer) {
+    fb.textContent = "Type your fix first ✍️";
+    return;
+  }
+
+  const checkBtn = document.querySelector(`#fix-${m} .check-btn`);
+  checkBtn.disabled = true;
+  fb.textContent = "Checking your fix… 🔍";
+
+  let verdict;
+  try {
+    ({ verdict } = await callAI({
+      action: "check-fix",
+      correctFact: mistake.correct_fact,
+      wrongSentence: mistake.wrong_text,
+      answer,
+    }));
+  } catch {
+    fb.textContent = "Something went wrong on our side, try again 🙏";
+    checkBtn.disabled = false;
+    return;
+  }
+
+  if (verdict === "correct") return markCaught(m);
+
+  round.attempts[m]++;
+  let message;
+  if (verdict === "close") {
+    message = "Close! 🤏 What exactly changes?";
+  } else {
+    round.wrongTaps++;
+    round.hadWrongFix[m] = true;
+    message = "Right spot 👀 but that's not the correct fix. Check your notes and try again.";
+  }
+  const nudge = round.attempts[m] >= 2 ? `<div class="nudge">💡 ${escapeHTML(mistake.nudge)}</div>` : "";
+  fb.innerHTML = `<div>${message}</div>${nudge}`;
+  checkBtn.disabled = false;
+  input.focus();
+}
+
+function markCaught(m) {
+  const mistake = caseData.mistakes[m];
+  round.found[m] = true;
+  closeFixBox();
+  const btn = document.querySelector(`.sentence[data-p="${mistake.point}"][data-s="${mistake.sentence}"]`);
+  btn.classList.add("caught");
+  btn.disabled = true;
+  btn.insertAdjacentHTML("beforeend", `<span class="stamp">CAUGHT ✓</span>`);
+  $(`fb-${mistake.point}-${mistake.sentence}`).innerHTML = `<div class="fact">✅ Your notes say: ${escapeHTML(mistake.correct_fact)}</div>`;
+
+  const foundCount = round.found.filter(Boolean).length;
+  $("found-count").textContent = foundCount;
+  if (foundCount === 3) {
+    $("round-message").textContent = "All 3 caught! 🎉 Case closed. (The Review screen arrives in the next build step.)";
+    $("round-message").hidden = false;
+  }
+}
 
 updateLearnButton();

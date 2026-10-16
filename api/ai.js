@@ -1,7 +1,8 @@
 // The serverless function: the only place that knows the Groq key.
 // POST /api/ai  { action: "make-case", notes }
+//              { action: "check-fix", correctFact, wrongSentence, answer }
 
-import { MAKE_CASE_INSTRUCTIONS, CASE_SCHEMA } from "./_prompts.js";
+import { MAKE_CASE_INSTRUCTIONS, CASE_SCHEMA, CHECK_FIX_INSTRUCTIONS, VERDICT_SCHEMA } from "./_prompts.js";
 
 // `vercel dev` doesn't pass .env.local to this function, so on your laptop we read it ourselves.
 // Once deployed, Vercel provides GROQ_API_KEY and this does nothing.
@@ -13,6 +14,7 @@ if (!process.env.GROQ_API_KEY) console.error("GROQ_API_KEY is missing: add it to
 const GROQ_URL ="https://api.groq.com/openai/v1/chat/completions";
 const MODEL = "openai/gpt-oss-120b";
 const MAX_NOTES = 6000;
+const MAX_ANSWER = 500;
 
 async function askGroq(instructions, userText, schemaName, schema) {
   const response = await fetch(GROQ_URL, {
@@ -108,6 +110,21 @@ export default async function handler(req, res) {
     const c = await makeCase(notes);
     if (!c) return res.status(500).json({ error: "confused" });
     return res.status(200).json(c);
+  }
+
+  if (body.action === "check-fix") {
+    const answer = String(body.answer || "").trim();
+    if (!answer || answer.length > MAX_ANSWER || !body.correctFact) {
+      return res.status(400).json({ error: "Type your fix in a sentence or two (up to 500 characters)." });
+    }
+    const question = `CORRECT FACT: ${body.correctFact}\nWRONG SENTENCE: ${body.wrongSentence || ""}\nSTUDENT'S ANSWER: ${answer}`;
+    try {
+      const { verdict } = await askGroq(CHECK_FIX_INSTRUCTIONS, question, "verdict", VERDICT_SCHEMA);
+      return res.status(200).json({ verdict });
+    } catch (err) {
+      console.error("check-fix failed:", err.message);
+      return res.status(500).json({ error: "server" });
+    }
   }
 
   return res.status(400).json({ error: "Unknown action" });

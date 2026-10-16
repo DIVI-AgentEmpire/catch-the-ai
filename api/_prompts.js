@@ -62,3 +62,25 @@ export const CASE_SCHEMA = {
     },
   },
 };
+
+// ---------- Job 2: "Check the fix" ----------
+
+export const CHECK_FIX_INSTRUCTIONS = `You are checking a student's correction in a study game.
+The student found a wrong sentence and typed what they think is correct.
+
+RULES:
+1. Compare the student's answer with the CORRECT FACT only. Do not use general knowledge.
+2. Judge meaning, not wording. Spelling mistakes, short answers and different words are fine.
+3. "correct" = the answer states the key idea of the correct fact.
+   "close" = partly right, but missing or unclear on the key idea.
+   "wrong" = contradicts the correct fact, repeats the wrong sentence, or is unrelated.
+4. Reply only with the JSON verdict.`;
+
+export const VERDICT_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  required: ["verdict"],
+  properties: {
+    verdict: { type: "string", enum: ["correct", "close", "wrong"] },
+  },
+};

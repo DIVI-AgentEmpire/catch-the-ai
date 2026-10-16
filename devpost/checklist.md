@@ -19,7 +19,7 @@ Build mode: learn for slices 1–3 (very short explanations, 2–3 lines); fast 
   Learner check: Run `npx vercel dev`, open http://localhost:3000, click Try an example, then Learn. You should see "Investigating your notes… 🔍", then 4–6 short points with bold terms and no `**` symbols. Also try an empty box and a two-sentence note to see the friendly messages.
   Commit: `Add Start and Learn screens with Groq make-case function`
 
-- [ ] **2. Catch the AI: tap a sentence, fix the mistake, get it stamped**
+- [x] **2. Catch the AI: tap a sentence, fix the mistake, get it stamped**
   Becomes usable: Clicking "I'm ready, test me" opens the case file with the banner, "0 of 3 found," and every sentence tappable, with the 3 wrong versions swapped in. Tapping a correct sentence shows "look again" + the reason (wrong taps +1). Tapping a mistake opens a correction box. Check the Fix asks Groq and shows CAUGHT ✓ (stamp + counter up), "Close! 🤏…", or "Right spot 👀…", with the nudge after 2 non-correct tries.
   Why now: This is the unique kernel, where the AI is confidently wrong and you must understand the material to win. It comes right after the summary works, so we find out early whether catching feels right.
   PRD ref: `prd.md > Catching Mistakes (Catch screen)`, `prd.md > Planting the Mistakes`, `prd.md > The Core Journey` (steps 4–5)
@@ -85,3 +85,4 @@ Activity mode: [live app and editor, explicit static fallback, focused alternati
 - Confirmed `openai/gpt-oss-120b` supports strict `json_schema` on Groq, so the JSON-mode fallback isn't needed. The build found this model "thinks" before answering, so the first test ran out of answer space; Groq calls now send `max_completion_tokens: 8000` and `reasoning_effort: "low"` (about 4 s per case).
 - Added `original_text` to each mistake (an exact copy of the correct sentence), plus a "work in this order" rule. In the first real call the AI put a wrong sentence inside the correct summary; the double-check now rejects that, and fixes a miscounted position when the copied sentence is found elsewhere.
 - `api/ai.js` now loads `.env.local` itself when `GROQ_API_KEY` isn't set. Under `vercel dev` (CLI 64.3.1, Windows) the function saw the key as undefined, so Groq answered 401 and the page showed "detective got confused." Deployed Vercel still provides the key through project settings.
+- A correct sentence counts as a wrong tap only the first time it's tapped; after that it's greyed out. The PRD didn't say what happens on repeat taps, and counting every tap would punish one guess several times.

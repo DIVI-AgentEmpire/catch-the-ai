@@ -113,9 +113,67 @@ strong { font-weight: 700; }
   letter-spacing: 2px;
 }
 .banner { color: var(--red); font-size: 1.3rem; margin: 0 0 8px; }
-.coming-soon { color: var(--muted); }
 
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap;
 }
+
+.counter { font-weight: 700; margin: 0 0 4px; }
+.instructions { color: var(--muted); font-size: 0.95rem; margin: 0 0 12px; }
+
+.point { padding: 6px 0 10px; border-bottom: 1px dashed var(--line); }
+.point:last-child { border-bottom: none; }
+
+.sentence {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  color: var(--ink);
+  line-height: 1.6;
+  font-weight: normal;
+  min-height: auto;
+}
+.sentence:hover:not(:disabled) { border-color: var(--line); background: var(--paper); }
+.sentence.open { border-color: var(--red); background: var(--paper); }
+.sentence.checked { color: var(--muted); }
+.sentence:disabled { cursor: default; opacity: 1; }
+
+.sentence.caught {
+  position: relative;
+  background: var(--green-tint);
+  border-color: transparent;
+  padding-right: 120px;
+}
+.sentence.caught .wrong-text { text-decoration: line-through; color: var(--muted); }
+.stamp {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  font-family: var(--typewriter);
+  color: var(--red);
+  border: 3px solid var(--red);
+  border-radius: 6px;
+  padding: 2px 8px;
+  transform: translateY(-50%) rotate(-8deg);
+  animation: stamp-in 0.35s ease-out;
+  background: rgba(255, 253, 248, 0.85);
+}
+@keyframes stamp-in {
+  from { transform: translateY(-50%) rotate(-8deg) scale(2.2); opacity: 0; }
+  to   { transform: translateY(-50%) rotate(-8deg) scale(1); opacity: 1; }
+}
+
+.feedback { margin: 0 12px 10px; font-size: 0.95rem; }
+.feedback .why { color: var(--muted); }
+.feedback .nudge { margin-top: 6px; }
+.feedback .fact { color: var(--muted); }
+
+.fix-box { margin: 0 12px 12px; }
+.fix-box textarea { min-height: 80px; margin-bottom: 8px; }
+.fix-box .row { gap: 8px; }
