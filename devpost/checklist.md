@@ -61,7 +61,7 @@ Build mode: learn for slices 1–3 (very short explanations, 2–3 lines); fast 
 
 ## Hands-on Checkpoints
 
-- [x] Early usable behavior explored — after slice 2 (the first time you can actually catch the AI), feeding into the slice 3 instruction tuning. Learner played the example round: mistakes fair; CAUGHT stamp, counter, look again and nudge all work. No changes requested; repeat-tap rule kept.
+- [x] Early usable behavior explored — after slice 2 (the first time you can actually catch the AI), feeding into the slice 3 instruction tuning. Learner played the example round: mistakes fair; CAUGHT stamp, counter, look again and nudge all work. No changes requested; repeat-tap rule kept. Second full round (all 3 caught): the Giffen goods mistake changed two facts at once (normal → inferior and rises → falls); learner wants each mistake to change only one fact (input for slice 3).
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
