@@ -9,7 +9,7 @@ Build mode: learn for slices 1–3 (very short explanations, 2–3 lines); fast 
 
 ## Slices
 
-- [ ] **1. Paste notes, click Learn, and read an AI summary of your own notes**
+- [x] **1. Paste notes, click Learn, and read an AI summary of your own notes**
   Becomes usable: The Start screen (notes box, Try an example, empty / too-short / too-long checks) and the Learn screen showing 4–6 clean points with bold terms, made by a real Groq call through the serverless function. A case file (summary + 3 planted mistakes + saved facts) already comes back with the response, but only the summary is shown.
   Why now: This is the biggest risk. We don't yet know if `openai/gpt-oss-120b` supports strict JSON schema on Groq, and the whole app depends on that one "make the case" call. It also sets up the project (files, package.json, .env.example, the detective look) so every later step has somewhere to land.
   PRD ref: `prd.md > The Core Journey` (steps 1–3), `prd.md > Notes Input (Start screen)`, `prd.md > Learn Summary`, `prd.md > States and Boundaries`
