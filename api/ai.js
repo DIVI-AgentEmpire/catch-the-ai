@@ -84,31 +84,41 @@ export function findCaseProblem(c) {
   return null;
 }
 
+// Returns { c } with a valid case, or { error } saying which friendly message to show:
+// "confused" when the AI answered badly, "server" when Groq couldn't be reached (down, bad key, rate limit).
 async function makeCase(notes) {
+  let error = "confused";
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
       const c = fixPositions(await askGroq(MAKE_CASE_INSTRUCTIONS, notes, "case_file", CASE_SCHEMA));
       const problem = findCaseProblem(c);
-      if (!problem) return c;
+      if (!problem) return { c };
+      error = "confused";
       console.error(`make-case attempt ${attempt} invalid: ${problem}`);
     } catch (err) {
+      error = err.name === "SyntaxError" ? "confused" : "server";
       console.error(`make-case attempt ${attempt} failed:`, err.message);
     }
   }
-  return null;
+  return { error };
 }
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Please use the app 🙂" });
-  const body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+  let body;
+  try {
+    body = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
+  } catch {
+    return res.status(400).json({ error: "server" });
+  }
 
   if (body.action === "make-case") {
     const notes = String(body.notes || "").trim();
     if (!notes || notes.length > MAX_NOTES) {
       return res.status(400).json({ error: "Please paste between a paragraph and 6,000 characters of notes." });
     }
-    const c = await makeCase(notes);
-    if (!c) return res.status(500).json({ error: "confused" });
+    const { c, error } = await makeCase(notes);
+    if (!c) return res.status(500).json({ error });
     return res.status(200).json(c);
   }
 

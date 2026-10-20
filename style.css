@@ -212,3 +212,24 @@ h3 { font-family: var(--typewriter); font-weight: normal; font-size: 1.2rem; mar
 .caught-tag { color: var(--red); }
 .missed-tag { color: var(--muted); }
 #review-revise p { margin: 12px 0; }
+
+/* Phones: tighter edges, and the stamp sits under the caught sentence instead of beside it. */
+@media (max-width: 480px) {
+  main { padding: 20px 16px 48px; }
+  h1 { font-size: 2rem; }
+  .case-file { padding: 16px 12px; }
+  .card { padding: 4px 16px; }
+  .sentence { padding: 10px; }
+  .sentence.caught { padding-right: 10px; padding-bottom: 50px; }
+  .stamp {
+    top: auto;
+    bottom: 10px;
+    transform: rotate(-8deg);
+    animation-name: stamp-in-phone;
+  }
+  .feedback, .fix-box { margin-left: 4px; margin-right: 4px; }
+}
+@keyframes stamp-in-phone {
+  from { transform: rotate(-8deg) scale(2.2); opacity: 0; }
+  to   { transform: rotate(-8deg) scale(1); opacity: 1; }
+}
