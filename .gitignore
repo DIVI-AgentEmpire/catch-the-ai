@@ -4,3 +4,9 @@
 !.env.example
 
 .vercel
+
+# Hackathon workshop skills (not part of the app)
+.agents/
+.claude/
+agent/
+skills-lock.json
