@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catch the AI App Map</title>
+<style>
+  :root {
+    --bg: #f6f1e7; --card: #fffdf8; --ink: #22201c; --muted: #6b645a;
+    --line: #e2d9c8; --accent: #b3261e; --tint: #fdf3d8; --code-bg: #efe7d6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1a17; --card: #262320; --ink: #eee8dc; --muted: #a9a094;
+      --line: #3d3832; --accent: #e5675d; --tint: #3a3220; --code-bg: #332e28;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a17; --card: #262320; --ink: #eee8dc; --muted: #a9a094;
+    --line: #3d3832; --accent: #e5675d; --tint: #3a3220; --code-bg: #332e28;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1, h2 { font-family: "Courier New", monospace; font-weight: 700; }
+  h1 { font-size: 1.9rem; margin: 0 0 4px; }
+  h2 { font-size: 1.25rem; margin: 36px 0 12px; color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  code { background: var(--code-bg); padding: 1px 6px; border-radius: 5px; font-size: 0.92em; overflow-wrap: anywhere; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 12px 0; }
+  .pieces { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .pieces .card { margin: 0; }
+  .pieces strong { display: block; }
+  /* Flow diagram */
+  .flow { list-style: none; padding: 0; margin: 0; }
+  .flow li { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; position: relative; }
+  .flow li + li { margin-top: 26px; }
+  .flow li + li::before {
+    content: "↓"; position: absolute; top: -25px; left: 22px; color: var(--accent); font-weight: 700;
+  }
+  .flow .where { color: var(--muted); font-size: 0.9rem; }
+  .flow .ext { background: var(--tint); }
+  .stop { display: flex; gap: 14px; }
+  .num {
+    flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: var(--card);
+    display: grid; place-items: center; font-weight: 700;
+  }
+  .stop p { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; }
+  td { border-top: 1px solid var(--line); padding: 8px 6px; vertical-align: top; }
+  td:first-child { width: 42%; }
+  summary { cursor: pointer; font-weight: 700; }
+  summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  pre { background: var(--code-bg); padding: 10px 12px; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; }
+  footer { color: var(--muted); font-size: 0.9rem; margin-top: 40px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Catch the AI 🔍 app map</h1>
+  <p class="sub">A one-page guide to where things live in this project, so you know where to start when you want to change something.</p>
+
+  <h2>What the app is</h2>
+  <p>You paste notes. The AI writes a short summary, then hides 3 mistakes in it. You catch each one by typing the correct idea in your own words, and a Review screen shows what to revise. There are only three main pieces:</p>
+  <div class="pieces">
+    <div class="card"><strong>The webpage</strong><code>index.html</code> <code>style.css</code> <code>app.js</code><br>The four screens and all the game rules: counter, hints, stamps, Review.</div>
+    <div class="card"><strong>The serverless function</strong><code>api/ai.js</code><br>The only place that knows the Groq key. It talks to the AI and double-checks what comes back.</div>
+    <div class="card"><strong>The AI instructions</strong><code>api/_prompts.js</code><br>The rules the AI must follow and the JSON "forms" it must fill in.</div>
+  </div>
+  <p>Nothing is stored: there's no database, and a case lives only in the open page.</p>
+
+  <h2>One action, followed through the code: "Check the Fix"</h2>
+  <ol class="flow" aria-label="What happens when you press Check the Fix">
+    <li>You type your correction and press <strong>Check the Fix</strong>.<div class="where">On the Catch screen</div></li>
+    <li><code>checkFix</code> in <code>app.js</code> packs your answer with the correct fact, the wrong sentence and, if it's on screen, the 💡 hint question, then sends it to <code>/api/ai</code>.</li>
+    <li><code>handler</code> in <code>api/ai.js</code> (the <code>"check-fix"</code> part) adds the judging rules from <code>CHECK_FIX_INSTRUCTIONS</code> and asks Groq through <code>askGroq</code>.</li>
+    <li class="ext">Groq (<code>openai/gpt-oss-120b</code>) fills in the form: <code>{"verdict": "correct" | "close" | "wrong"}</code>.<div class="where">External AI service</div></li>
+    <li>Back in <code>app.js</code>: “correct” runs <code>markCaught</code> (red CAUGHT ✓ stamp, counter goes up, and confetti then <code>showReview</code> on the 3rd). “close” or “wrong” shows a message and, after 2 tries, the 💡 hint.</li>
+  </ol>
+
+  <h2>The route, stop by stop</h2>
+  <p class="sub">A reference route: open these in your editor and use your editor's search (Ctrl+F) with the name shown.</p>
+
+  <div class="card stop"><div class="num">1</div><div>
+    <p><code>app.js</code> → search <code>async function checkFix</code></p>
+    <p>Where your answer leaves the page. The <code>hintQuestion</code> line is the fix for your "rejecting" bug: once the hint is showing, the AI gets to see the question you're answering.</p>
+  </div></div>
+
+  <div class="card stop"><div class="num">2</div><div>
+    <p><code>api/ai.js</code> → search <code>body.action === "check-fix"</code>, then <code>api/_prompts.js</code> → <code>CHECK_FIX_INSTRUCTIONS</code></p>
+    <p>The function builds the question for the AI and attaches the rules. Those rules decide how strict the judging is ("judge meaning, not wording"). If something goes wrong here, the page gets a friendly <code>{"error": "server"}</code>, never an error code.</p>
+  </div></div>
+
+  <div class="card stop"><div class="num">3</div><div>
+    <p><code>app.js</code> → search <code>function markCaught</code>, then <code>function showReview</code></p>
+    <p>What you see: the stamp, the counter and confetti. <code>showReview</code> then builds the Review screen from the round's numbers, using <code>resultLabel</code> and <code>reviseList</code>, with no AI involved.</p>
+  </div></div>
+
+  <h2>To change this, start here</h2>
+  <div class="card">
+    <table>
+      <tr><td>How fair the planted mistakes are</td><td><code>api/_prompts.js</code> → <code>MAKE_CASE_INSTRUCTIONS</code>, rules 3 and 4</td></tr>
+      <tr><td>How strictly fixes are judged</td><td><code>api/_prompts.js</code> → <code>CHECK_FIX_INSTRUCTIONS</code></td></tr>
+      <tr><td>The automatic double-check of the AI's case</td><td><code>api/ai.js</code> → <code>findCaseProblem</code></td></tr>
+      <tr><td>Feedback wording ("Close! 🤏…", "Right spot 👀…")</td><td><code>app.js</code> → inside <code>checkFix</code></td></tr>
+      <tr><td>Result labels and when they appear</td><td><code>app.js</code> → <code>resultLabel</code>; Gen Z lines in <code>MOTIVATION</code></td></tr>
+      <tr><td>Colors, fonts, phone layout</td><td><code>style.css</code> → <code>:root</code> at the top; phone rules in <code>@media (max-width: 480px)</code></td></tr>
+      <tr><td>The "Try an example" notes</td><td><code>sample-notes.js</code></td></tr>
+    </table>
+  </div>
+
+  <h2>A practice to reuse</h2>
+  <div class="card">
+    <p><strong>Test AI instructions against answers you already know, and fix one rule at a time.</strong></p>
+    <p>In this project, check-fix was tested with fixed answers whose right verdict was decided in advance: "demand goes down" → correct, "demand stays the same" → wrong, "price and demand are related" → close. Make-case was run several times on the sample notes and real B.Com notes, and each unfair mistake became one new rule (one fact per mistake, wrong in real life, never contradicting itself, different ideas, natural wording). The evidence for each change is recorded under <code>devpost/checklist.md</code> → <em>Revisions</em>.</p>
+    <p>Two lessons came out of that testing:</p>
+    <ul>
+      <li><strong>The AI copies the examples you give it.</strong> When a rule's "Bad" example used a real phrase from the notes ("per hour"), the AI started writing that phrase. The examples now come from unrelated subjects: fruit, boiling water and photosynthesis.</li>
+      <li><strong>Instructions make good behavior likely, not guaranteed.</strong> That's why <code>findCaseProblem</code> in code still checks the shape of every case (exactly 3 mistakes, in different points, no stray symbols) and asks again once.</li>
+    </ul>
+    <p><em>Next project:</em> before writing a prompt, write 3–5 example inputs with the output you expect, run them after every change, and back up the rules that matter most with a check in code.</p>
+  </div>
+
+  <h2>Run it again</h2>
+  <div class="card">
+    <details>
+      <summary>Commands</summary>
+      <pre>npx vercel dev
+# then open http://localhost:3000</pre>
+      <p>Needs <code>GROQ_API_KEY</code> in <code>.env.local</code> (see <code>README.md</code>).</p>
+    </details>
+  </div>
+
+  <footer>A snapshot of the code at commit <code>eff0950</code>. If the code changes later, names and details here may drift.</footer>
+</main>
+</body>
+</html>

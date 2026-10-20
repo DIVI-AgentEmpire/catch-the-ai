@@ -62,24 +62,24 @@ Build mode: learn for slices 1–3 (very short explanations, 2–3 lines); fast 
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — after slice 2 (the first time you can actually catch the AI), feeding into the slice 3 instruction tuning. Learner played the example round: mistakes fair; CAUGHT stamp, counter, look again and nudge all work. No changes requested; repeat-tap rule kept. Second full round (all 3 caught): the Giffen goods mistake changed two facts at once (normal → inferior and rises → falls); learner wants each mistake to change only one fact (input for slice 3).
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed (learner: "Mostly worked"; the one fairness issue was fixed and retested)
 
 ## Final Review
 
-- [ ] Make-case: each of the 3 mistakes tests a different fact or concept, and every wrong sentence reads naturally. Learner's kick-the-tires feedback: "mostly worked", but on their Forex notes 2 of the 3 mistakes tested the same idea (fixed vs flexible exchange rate), and one read oddly ("decided by the government in the market"). Rule added; waiting for the learner to retry their Forex notes.
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Make-case: each of the 3 mistakes tests a different fact or concept, and every wrong sentence reads naturally. Learner's kick-the-tires feedback: "mostly worked", but on their Forex notes 2 of the 3 mistakes tested the same idea (fixed vs flexible exchange rate), and one read oddly ("decided by the government in the market"). Rule added. The learner retried their real Forex notes: the 3 mistakes were fair and each tested a different idea.
+- [x] Final review complete — feedback resolved and learner confirms ready to ship ("Let's move to shipping"). Known limit, accepted: the AI occasionally breaks an existing fairness rule (seen once each: a whole-sentence swap, and the earlier-rejected "to find the selling price").
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: [what actually happened; real document/test/code references; unfinished work if interrupted]
-Route and stops: [actual paths and symbols; guided stops completed, or reference-only route]
-Edit outcome: [tried/kept/reverted/declined/not applicable; verification if changed]
-Reflection: [offered/answered/declined/already covered — personal answer belongs only in the ignored profile]
-Activity mode: [live app and editor, explicit static fallback, focused alternative, prior practice, or recap]
+Activity and evidence: Prior practice connected. The learner's goal was to give the AI clear instructions. Slice 3 and the final review were exactly that practice: known-answer check-fix tests (5/5 plus 5/5 hint answers), repeated make-case runs on the sample, cost accounting and Forex notes, and one rule added per unfair mistake the learner spotted (see Revisions). It was connected rather than repeated.
+Route and stops: Reference-only route in the map, not toured live. 1) `app.js` › `checkFix`  2) `api/ai.js` › `handler` "check-fix" + `api/_prompts.js` › `CHECK_FIX_INSTRUCTIONS`  3) `app.js` › `markCaught` / `showReview`.
+Edit outcome: Not applicable. The learner already changed the AI's behavior through rules they chose during slice 3 and the final review.
+Reflection: Offered at the wrap-up (optional).
+Activity mode: Prior practice. The map was checked at 375px (no sideways scrolling) and every anchor was confirmed in the source; map snapshot at commit eff0950.
 
 ## Revisions
 
