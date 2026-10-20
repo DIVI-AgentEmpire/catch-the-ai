@@ -223,6 +223,8 @@ async function checkFix(m) {
       action: "check-fix",
       correctFact: mistake.correct_fact,
       wrongSentence: mistake.wrong_text,
+      // Once the 💡 hint is on screen, a short answer to its question can be the whole fix.
+      hintQuestion: round.attempts[m] >= 2 ? mistake.nudge : "",
       answer,
     }));
   } catch {

@@ -1,6 +1,6 @@
 // The serverless function: the only place that knows the Groq key.
 // POST /api/ai  { action: "make-case", notes }
-//              { action: "check-fix", correctFact, wrongSentence, answer }
+//              { action: "check-fix", correctFact, wrongSentence, hintQuestion, answer }
 
 import { MAKE_CASE_INSTRUCTIONS, CASE_SCHEMA, CHECK_FIX_INSTRUCTIONS, VERDICT_SCHEMA } from "./_prompts.js";
 
@@ -117,7 +117,9 @@ export default async function handler(req, res) {
     if (!answer || answer.length > MAX_ANSWER || !body.correctFact) {
       return res.status(400).json({ error: "Type your fix in a sentence or two (up to 500 characters)." });
     }
-    const question = `CORRECT FACT: ${body.correctFact}\nWRONG SENTENCE: ${body.wrongSentence || ""}\nSTUDENT'S ANSWER: ${answer}`;
+    const hint = String(body.hintQuestion || "").trim();
+    const question = `CORRECT FACT: ${body.correctFact}\nWRONG SENTENCE: ${body.wrongSentence || ""}\n` +
+      (hint ? `HINT QUESTION: ${hint}\n` : "") + `STUDENT'S ANSWER: ${answer}`;
     try {
       const { verdict } = await askGroq(CHECK_FIX_INSTRUCTIONS, question, "verdict", VERDICT_SCHEMA);
       return res.status(200).json({ verdict });

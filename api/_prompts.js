@@ -81,7 +81,8 @@ RULES:
 3. "correct" = the answer states the key idea of the correct fact.
    "close" = partly right, but missing or unclear on the key idea.
    "wrong" = contradicts the correct fact, repeats the wrong sentence, or is unrelated.
-4. Reply only with the JSON verdict.`;
+4. If there is a HINT QUESTION, the student may be answering it. Read the answer together with the question: if a short answer (even one word) gives the right answer to the question and that matches the correct fact, it is "correct".
+5. Reply only with the JSON verdict.`;
 
 export const VERDICT_SCHEMA = {
   type: "object",
