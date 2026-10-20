@@ -44,6 +44,8 @@ PRD ref: `prd.md > The Core Journey`.
 - **Test on your laptop:** in the project folder, run `npx vercel dev`. The first time, it asks you to log in and link the project. Then open **http://localhost:3000**. This runs the webpage and the serverless function together, just like on Vercel. Docs: [vercel dev](https://vercel.com/docs/cli/dev).
 - **Demo recording:** record the local app (or the live link) following the 1-minute demo in `scope.md > What "Working" Looks Like`.
 - **Submission:** a **short demo video** and a **public GitHub repository** are both required.
+- **Public repo:** https://github.com/DIVI-AgentEmpire/catch-the-ai (branch `main`; checked visible without logging in).
+- **Demo video:** not recorded yet.
 - **Optional deploy (learner wants it):** run `npx vercel` to create a preview, then add `GROQ_API_KEY` in the Vercel project's **Settings → Environment Variables**, then run `npx vercel --prod`. Docs: [Environment variables](https://vercel.com/docs/environment-variables). A live link is a bonus. It doesn't replace the video.
 
 ## Look and Feel
