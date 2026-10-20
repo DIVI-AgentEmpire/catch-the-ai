@@ -129,8 +129,10 @@ function startRound() {
     hinted: [],
     missed: [],
     checkedSentences: new Set(), // correct sentences already tapped ("p-s")
+    over: false,
   };
   renderCatch();
+  updateTools();
   showScreen("catch");
 }
 
@@ -217,6 +219,7 @@ async function checkFix(m) {
   checkBtn.disabled = true;
   fb.textContent = "Checking your fix… 🔍";
 
+  const thisRound = round;
   let verdict;
   try {
     ({ verdict } = await callAI({
@@ -232,6 +235,8 @@ async function checkFix(m) {
     checkBtn.disabled = false;
     return;
   }
+  // The round ended (Show answers / Next case) while we were waiting: ignore the answer.
+  if (thisRound !== round || round.over) return;
 
   if (verdict === "correct") return markCaught(m);
 
@@ -259,13 +264,112 @@ function markCaught(m) {
   btn.disabled = true;
   btn.insertAdjacentHTML("beforeend", `<span class="stamp">CAUGHT ✓</span>`);
   $(`fb-${mistake.point}-${mistake.sentence}`).innerHTML = `<div class="fact">✅ Your notes say: ${escapeHTML(mistake.correct_fact)}</div>`;
+  clearHint(mistake.point);
 
   const foundCount = round.found.filter(Boolean).length;
   $("found-count").textContent = foundCount;
+  updateTools();
   if (foundCount === 3) {
-    $("round-message").textContent = "All 3 caught! 🎉 Case closed. (The Review screen arrives in the next build step.)";
+    round.over = true;
+    $("hint-btn").disabled = true;
+    $("show-btn").disabled = true;
+    $("round-message").textContent = "All 3 caught! 🎉 Case closed.";
     $("round-message").hidden = false;
+    window.confetti();
+    const thisRound = round;
+    setTimeout(() => round === thisRound && showReview(), 2200);
   }
 }
+
+// ---------- Hint and Show answers ----------
+
+// The next mistake a hint can point at: not found yet and not hinted yet.
+function nextHint() {
+  return [0, 1, 2].find((m) => !round.found[m] && !round.hinted.includes(m));
+}
+
+function updateTools() {
+  $("hint-btn").disabled = round.over || nextHint() === undefined;
+  $("show-btn").disabled = round.over;
+}
+
+$("hint-btn").addEventListener("click", () => {
+  const m = nextHint();
+  if (m === undefined) return;
+  round.hinted.push(m);
+  round.hintsUsed++;
+  const point = $(`point-${caseData.mistakes[m].point}`);
+  point.classList.add("hinted");
+  point.insertAdjacentHTML("afterbegin", `<div class="hint-tag">💡 A mistake is hiding in this point</div>`);
+  point.scrollIntoView({ behavior: "smooth", block: "center" });
+  updateTools();
+});
+
+function clearHint(p) {
+  $(`point-${p}`).classList.remove("hinted");
+  $(`point-${p}`).querySelector(".hint-tag")?.remove();
+}
+
+$("show-btn").addEventListener("click", () => {
+  round.over = true;
+  showReview();
+});
+
+// ---------- Review screen ----------
+
+const MOTIVATION = [
+  "No cap, every topper started here 💯 Read it once more and come back stronger 🚀",
+  "Not your day, but it's a plot twist, not the ending 📖✨ Revise and run it back 🔁",
+  "Lowkey this is how learning works 🧠 One more read and you'll catch them all 🕵️",
+];
+
+// The result label, checked in the spec's order.
+function resultLabel(r) {
+  const found = r.found.filter(Boolean).length;
+  if (found <= 1) return { emoji: "📚", text: "Revise this chapter", low: true };
+  if (found === 3 && r.wrongTaps <= 1 && r.hintsUsed === 0) return { emoji: "👍😄", text: "Strong understanding" };
+  return { emoji: "🙂💪", text: "Getting there" };
+}
+
+// Mistakes to revise: missed, or caught only after at least one wrong fix.
+function reviseList(r, mistakes) {
+  return mistakes.filter((_, i) => !r.found[i] || r.hadWrongFix[i]);
+}
+
+function showReview() {
+  round.over = true;
+  round.missed = [0, 1, 2].filter((m) => !round.found[m]);
+  const found = 3 - round.missed.length;
+  $("review-numbers").textContent = `Mistakes found: ${found} of 3 · Wrong taps: ${round.wrongTaps} · Hints used: ${round.hintsUsed}`;
+
+  const label = resultLabel(round);
+  const line = MOTIVATION[Math.floor(Math.random() * MOTIVATION.length)];
+  $("review-label").innerHTML = `<p class="label">${label.emoji} ${label.text}</p>` + (label.low ? `<p class="motivation">${line}</p>` : "");
+
+  $("review-mistakes").innerHTML = caseData.mistakes
+    .map((m, i) => {
+      const status = round.found[i] ? `<span class="tag caught-tag">CAUGHT ✓</span>` : `<span class="tag missed-tag">MISSED</span>`;
+      return `<div class="reveal card">${status}
+                <p class="wrong">❌ ${escapeHTML(m.wrong_text)}</p>
+                <p class="right">✅ ${escapeHTML(m.correct_fact)}</p>
+              </div>`;
+    })
+    .join("");
+
+  const revise = reviseList(round, caseData.mistakes);
+  $("review-revise").innerHTML = revise.length
+    ? revise.map((m) => `<p>📌 Revise: ${escapeHTML(m.topic)}. Your notes say: ${escapeHTML(m.correct_fact)}</p>`).join("")
+    : `<p>Nothing to revise, case closed 🕵️✅</p>`;
+
+  showScreen("review");
+}
+
+$("next-btn").addEventListener("click", () => {
+  caseData = null;
+  round = null;
+  $("notes").value = "";
+  updateLearnButton();
+  showScreen("start");
+});
 
 updateLearnButton();

@@ -39,7 +39,7 @@ Build mode: learn for slices 1–3 (very short explanations, 2–3 lines); fast 
   Learner check: Paste one of your own B.Com notes into the app, click Learn and then Test me. For each of the 3 mistakes, say whether it's fair: does it clearly contradict your notes, without trick wording?
   Commit: `Tune AI instructions after testing on real notes`
 
-- [ ] **4. Finish the round: hints, Show answers, confetti, and the Review screen**
+- [x] **4. Finish the round: hints, Show answers, confetti, and the Review screen**
   Becomes usable: The whole journey end to end. Hint highlights the point with an unfound mistake. Show answers ends the round. The 3rd catch fires confetti and leads to Review, which shows the three numbers, the honest label (+ Gen Z line for low results), every mistake with its correct fact (caught/missed), the revise list, and Next case back to an empty Start screen.
   Why now: Everything on Review is plain code built from the round data, so it needs the Catch screen (and tuned instructions) underneath it. It's low risk, so it goes after the risky parts.
   PRD ref: `prd.md > Catching Mistakes (Catch screen)` (Hint, Show answers, all 3 caught), `prd.md > Review and Result`, `prd.md > The Core Journey` (steps 6–8)

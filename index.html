@@ -44,14 +44,31 @@
         <div class="case-tab">CASE FILE</div>
         <p class="banner">3 mistakes are hidden here</p>
         <p class="counter" aria-live="polite"><span id="found-count">0</span> of 3 found</p>
+        <div class="row tools">
+          <button id="hint-btn" class="secondary">💡 Hint</button>
+          <button id="show-btn" class="secondary">Show answers</button>
+        </div>
         <p class="instructions">Tap a sentence you think is wrong, then type the correct idea in your own words.</p>
         <div id="case-body"></div>
         <p id="round-message" class="big-message" hidden></p>
       </div>
     </section>
+
+    <!-- Review screen -->
+    <section id="review" class="screen" hidden>
+      <h2>Case report 🗂️</h2>
+      <p id="review-numbers" class="numbers"></p>
+      <div id="review-label" class="result card"></div>
+      <h3>The 3 mistakes</h3>
+      <div id="review-mistakes"></div>
+      <h3>What to revise</h3>
+      <div id="review-revise" class="card"></div>
+      <button id="next-btn" class="primary">🔍 Next case: paste your next chapter</button>
+    </section>
   </main>
 
   <script src="sample-notes.js"></script>
+  <script src="confetti.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

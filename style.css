@@ -177,3 +177,38 @@ strong { font-weight: 700; }
 .fix-box { margin: 0 12px 12px; }
 .fix-box textarea { min-height: 80px; margin-bottom: 8px; }
 .fix-box .row { gap: 8px; }
+
+/* Hint and Show answers */
+.tools { margin: 8px 0 12px; }
+.tools button { padding: 8px 16px; min-height: 44px; }
+.point.hinted {
+  background: #fdf3d8;
+  border-radius: 8px;
+  outline: 2px dashed #e0a526;
+  outline-offset: 2px;
+}
+.hint-tag { font-size: 0.9rem; padding: 6px 12px 0; color: var(--ink); }
+
+/* Confetti */
+.confetti { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+
+/* Review screen */
+h3 { font-family: var(--typewriter); font-weight: normal; font-size: 1.2rem; margin: 28px 0 12px; }
+.numbers { font-weight: 700; margin: 0 0 16px; }
+.result .label { font-size: 1.4rem; font-weight: 700; }
+.result .motivation { color: var(--muted); }
+.reveal { position: relative; padding-top: 14px; padding-bottom: 6px; }
+.reveal p { margin: 8px 0; }
+.reveal .wrong { color: var(--muted); text-decoration: line-through; }
+.tag {
+  display: inline-block;
+  font-family: var(--typewriter);
+  border: 2px solid currentColor;
+  border-radius: 6px;
+  padding: 0 8px;
+  font-size: 0.9rem;
+  transform: rotate(-3deg);
+}
+.caught-tag { color: var(--red); }
+.missed-tag { color: var(--muted); }
+#review-revise p { margin: 12px 0; }
